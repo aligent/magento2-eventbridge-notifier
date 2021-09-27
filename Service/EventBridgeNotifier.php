@@ -1,7 +1,8 @@
 <?php
 
-namespace Aligent\EventBridge\Service\EventBridge;
+namespace Aligent\EventBridge\Service;
 
+use Aligent\EventBridge\Model\Config as EventBridgeConfig;
 use Aligent\Webhooks\Api\Data\WebhookInterface;
 use Aligent\Webhooks\Helper\NotifierResult;
 use Magento\Framework\Encryption\EncryptorInterface;
@@ -12,8 +13,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class EventBridgeNotifier
  *
- * This norifier relays evetns into AWS EventBridge. A serverless event bus for building
- * event driven applications.
+ * A notifier for relaying events into AWS EventBridge.
  *
  */
 class EventBridgeNotifier implements NotifierInterface
@@ -34,6 +34,11 @@ class EventBridgeNotifier implements NotifierInterface
     private LoggerInterface $logger;
 
     /**
+     * @var EventBridgeConfig 
+     */
+    private EventBridgeConfig $config;
+
+    /**
      * @var EventBridgeClient
      */
     private $eventBridgeClient;
@@ -41,18 +46,20 @@ class EventBridgeNotifier implements NotifierInterface
     public function __construct(
         Json $json,
         EncryptorInterface $encryptor,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        EventBridgeConfig $config,
     ) {
         $this->json = $json;
         $this->encryptor = $encryptor;
         $this->logger = $logger;
+        $this->config = $config;
 
         $this->eventBridgeClient = new EventBridgeClient([
             'version' => '2015-10-07',
-            'region' => 'ap-southeast-2',
+            'region' => $this->config->getAWSRegion(),
             'credentials' => [
-                'key' => '',
-                'secret' => ''
+                'key' => $this->config->getAWSKeyId(),
+                'secret' => $this->config->getAWSSecretKey()
             ]
         ]);
     }
@@ -68,7 +75,7 @@ class EventBridgeNotifier implements NotifierInterface
         // Elaborate event parameters
         $eventEntry = [
              // TODO: Replace with store domain
-            'Source' => 'example.com',
+            'Source' => $this->config->getEventBridgeSource(),
             'Detail' => $this->json->serialize($data),
             // TODO: Format event name
             'DetailType' => $webhook->getEventName(),
@@ -77,7 +84,7 @@ class EventBridgeNotifier implements NotifierInterface
         ];
 
         try {
-            $eventEntry['EventBusName'] = 'default';
+            $eventEntry['EventBusName'] = $this->config->getEventBridgeBus();
             $result = $this->eventBridgeClient->putEvents([
                 'Entries' => [$eventEntry]
             ]);
