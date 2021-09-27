@@ -7,7 +7,7 @@ use Magento\Framework\App\CacheInterface;
 
 class Config
 {
-    const XML_PATH_AWS_ACCESS_KEY = 'aligent_eventbridge/credentials/access_key';
+    const XML_PATH_AWS_ACCESS_KEY = 'aligent_eventbridge/credentials/access_key_id';
     const XML_PATH_AWS_SECRET_ACCESS_KEY = 'aligent_eventbridge/credentials/secret_access_key';
     const XML_PATH_AWS_REGION = 'aligent_eventbridge/options/region';
     const XML_PATH_EVENT_SOURCE = 'aligent_eventbridge/options/source';
