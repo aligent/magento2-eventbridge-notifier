@@ -87,12 +87,28 @@ class EventBridgeNotifier implements NotifierInterface
                  ]
             ]);
 
-            $notifierResult->setSuccess(true);
+            // Some event failures, which don't fail the entire request but do cause a failure of the
+            // event submission result in failed results in the result->entries.
+            // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-eventbridge-2015-10-07.html#putevents
+            if ( isset($result['FailedEntryCount']) && $result['FailedEntryCount'] > 0) {
+                 $notifierResult->setSuccess(false);
 
-            $notifierResult->setResponseData(
-                 $this->json->serialize($result)
-            );
+                 // As we are only ever submitting one event at a time, assume that only one result
+                 // can be returned.
+                 $entry = $result['Entries'][0];
+                 if ($entry !== null) {
+                      $notifierResult->setResponseData(
+                           $this->json->serialize($entry)
+                      );
+                 }
 
+            } else {
+                 $notifierResult->setSuccess(true);
+
+                 $notifierResult->setResponseData(
+                      $this->json->serialize($result)
+                 );
+            }
         } catch (\Exception $exception) {
             $this->logger->error($exception);
 
