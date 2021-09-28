@@ -3,6 +3,7 @@
 namespace Aligent\EventBridge\Service;
 
 use Aligent\EventBridge\Model\Config as EventBridgeConfig;
+use Aligent\Webhooks\Service\Webhook\NotifierInterface;
 use Aligent\Webhooks\Api\Data\WebhookInterface;
 use Aligent\Webhooks\Helper\NotifierResult;
 use Magento\Framework\Encryption\EncryptorInterface;
@@ -34,7 +35,7 @@ class EventBridgeNotifier implements NotifierInterface
     private LoggerInterface $logger;
 
     /**
-     * @var EventBridgeConfig 
+     * @var EventBridgeConfig
      */
     private EventBridgeConfig $config;
 
@@ -47,7 +48,7 @@ class EventBridgeNotifier implements NotifierInterface
         Json $json,
         EncryptorInterface $encryptor,
         LoggerInterface $logger,
-        EventBridgeConfig $config,
+        EventBridgeConfig $config
     ) {
         $this->json = $json;
         $this->encryptor = $encryptor;
@@ -59,7 +60,7 @@ class EventBridgeNotifier implements NotifierInterface
             'region' => $this->config->getAWSRegion(),
             'credentials' => [
                 'key' => $this->config->getAWSKeyId(),
-                'secret' => $this->config->getAWSSecretKey()
+                'secret' => $this->encryptor->decrypt($this->config->getAWSSecretKey())
             ]
         ]);
     }
@@ -74,10 +75,8 @@ class EventBridgeNotifier implements NotifierInterface
 
         // Elaborate event parameters
         $eventEntry = [
-             // TODO: Replace with store domain
             'Source' => $this->config->getEventBridgeSource(),
             'Detail' => $this->json->serialize($data),
-            // TODO: Format event name
             'DetailType' => $webhook->getEventName(),
             'Resources' => [],
             'Time' => time()
@@ -104,7 +103,6 @@ class EventBridgeNotifier implements NotifierInterface
                 $this->json->serialize($exception)
             );
         }
-
 
         return $notifierResult;
     }

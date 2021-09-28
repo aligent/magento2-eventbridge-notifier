@@ -3,7 +3,7 @@
 namespace Aligent\EventBridge\Model;
 
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Config
 {
@@ -19,23 +19,22 @@ class Config
     protected $storeManager;
 
     /**
-     * @var CacheInterface
+     * @var ScopeConfigInterface
      */
-    protected $cache;
+    protected $scopeConfig;
 
     /**
      * Config constructor.
      *
      * @param StoreManagerInterface $storeManager
-     * @param CacheInterface $cache
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        CacheInterface        $cache,
-    )
-    {
+        ScopeConfigInterface $scopeConfig
+    ) {
         $this->storeManager = $storeManager;
-        $this->cache = $cache;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -50,7 +49,6 @@ class Config
      * @inheritdoc
      */
     public function getAWSSecretKey()
-
     {
          return $this->scopeConfig->getValue(self::XML_PATH_AWS_SECRET_ACCESS_KEY, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
@@ -84,12 +82,11 @@ class Config
         $source = $this->scopeConfig->getValue(self::XML_PATH_EVENT_SOURCE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if ($source == null) {
              $url = $this->storeManager->getStore()->getBaseUrl();
-             if ($url !== null) {
-                  return parse_url($url, PHP_URL_HOST);
-             }
+            if ($url !== null) {
+                 return parse_url($url, PHP_URL_HOST);
+            }
         }
 
         return null;
     }
-
 }
