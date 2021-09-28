@@ -73,19 +73,18 @@ class EventBridgeNotifier implements NotifierInterface
         $notifierResult = new NotifierResult();
         $notifierResult->setSubscriptionId($webhook->getSubscriptionId());
 
-        // Elaborate event parameters
-        $eventEntry = [
-            'Source' => $this->config->getEventBridgeSource(),
-            'Detail' => $this->json->serialize($data),
-            'DetailType' => $webhook->getEventName(),
-            'Resources' => [],
-            'Time' => time()
-        ];
-
         try {
             $eventEntry['EventBusName'] = $this->config->getEventBridgeBus();
             $result = $this->eventBridgeClient->putEvents([
-                'Entries' => [$eventEntry]
+                 'Entries' => [
+                      [
+                           'Source' => $this->config->getEventBridgeSource(),
+                           'Detail' => $this->json->serialize($data),
+                           'DetailType' => $webhook->getEventName(),
+                           'Resources' => [],
+                           'Time' => time()
+                      ]
+                 ]
             ]);
 
             $notifierResult->setSuccess(true);
