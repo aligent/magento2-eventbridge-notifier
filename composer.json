@@ -25,7 +25,7 @@
         "registration.php"
     ],
     "psr-4": {
-      "Aligent\\Webhooks\\": ""
+      "Aligent\\EventBridge\\": ""
     }
   },
   "scripts": {
