@@ -3,7 +3,7 @@
   "description": "An AWS EventBridge notifier backed by the aligent/magento2-webhooks module.",
   "type": "magento2-module",
   "require": {
-    "php":  "~7.4.0",
+    "php":  ">=7.0",
     "magento/framework": "*",
     "aws/aws-sdk-php": "^3.110"
   },
