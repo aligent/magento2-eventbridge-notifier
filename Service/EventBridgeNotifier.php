@@ -22,22 +22,22 @@ class EventBridgeNotifier implements NotifierInterface
     /**
      * @var Json
      */
-    private Json $json;
+    private $json;
 
     /**
      * @var EncryptorInterface
      */
-    private EncryptorInterface $encryptor;
+    private $encryptor;
 
     /**
      * @var LoggerInterface
      */
-    private LoggerInterface $logger;
+    private $logger;
 
     /**
      * @var EventBridgeConfig
      */
-    private EventBridgeConfig $config;
+    private $config;
 
     /**
      * @var EventBridgeClient
