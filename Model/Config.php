@@ -87,6 +87,6 @@ class Config
             }
         }
 
-        return null;
+        return $source;
     }
 }
