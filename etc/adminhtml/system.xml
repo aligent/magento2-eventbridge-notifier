@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
      <system>
           <section id="aligent_eventbridge" showInDefault="1" showInWebsite="1" showInStore="1">
-               <label>AWS EventBridge</label>
+               <label>Amazon EventBridge</label>
                <tab>service</tab>
                <resource>Magento_Webapi::config_webapi</resource>
 
