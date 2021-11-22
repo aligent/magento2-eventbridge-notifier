@@ -1,6 +1,6 @@
 {
   "name": "aligent/magento2-eventbridge-notifier",
-  "description": "An AWS EventBridge notifier backed by the aligent/magento2-webhooks module.",
+  "description": "An Amazon EventBridge notifier backed by the aligent/magento2-webhooks module.",
   "type": "magento2-module",
   "require": {
     "php":  ">=7.0",

@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class EventBridgeNotifier
  *
- * A notifier for relaying events into AWS EventBridge.
+ * A notifier for relaying events into Amazon EventBridge.
  *
  */
 class EventBridgeNotifier implements NotifierInterface
