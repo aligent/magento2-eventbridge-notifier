@@ -3,9 +3,9 @@
 namespace Aligent\EventBridge\Service;
 
 use Aligent\EventBridge\Model\Config as EventBridgeConfig;
-use Aligent\Webhooks\Service\Webhook\NotifierInterface;
-use Aligent\Webhooks\Api\Data\WebhookInterface;
-use Aligent\Webhooks\Helper\NotifierResult;
+use Aligent\AsyncEvents\Service\AsyncEvent\NotifierInterface;
+use Aligent\AsyncEvents\Api\Data\AsyncEventInterface;
+use Aligent\AsyncEvents\Helper\NotifierResult;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Aws\EventBridge\EventBridgeClient;
@@ -68,10 +68,10 @@ class EventBridgeNotifier implements NotifierInterface
     /**
      * {@inheritDoc}
      */
-    public function notify(WebhookInterface $webhook, array $data): NotifierResult
+    public function notify(AsyncEventInterface $asyncEvent, array $data): NotifierResult
     {
         $notifierResult = new NotifierResult();
-        $notifierResult->setSubscriptionId($webhook->getSubscriptionId());
+        $notifierResult->setSubscriptionId($asyncEvent->getSubscriptionId());
 
         try {
             $eventEntry['EventBusName'] = $this->config->getEventBridgeBus();
@@ -80,7 +80,7 @@ class EventBridgeNotifier implements NotifierInterface
                       [
                            'Source' => $this->config->getEventBridgeSource(),
                            'Detail' => $this->json->serialize($data),
-                           'DetailType' => $webhook->getEventName(),
+                           'DetailType' => $asyncEvent->getEventName(),
                            'Resources' => [],
                            'Time' => time()
                       ]

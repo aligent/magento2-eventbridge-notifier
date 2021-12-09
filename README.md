@@ -1,5 +1,5 @@
 # Magento 2 Eventbridge Notifier
-This repository adds an [aligent/magento2-webhooks](https://bitbucket.org/aligent/magento2-webhooks) compatible notifier for submitting events to [Amazon EventBridge](https://aws.amazon.com/eventbridge/).
+This repository adds an [aligent/async-events](https://github.com/aligent/magento-async-events) compatible notifier for submitting events to [Amazon EventBridge](https://aws.amazon.com/eventbridge/).
 
 ## How to use
 This module only provides an implementation of the `EventBridgeNotifier`. The `NotifierFactoryInterface` does not know anything about it yet. Therefore, it must be hooked up to the factory depending on the implementation of the `NotifierFactory`.
@@ -9,7 +9,7 @@ This module only provides an implementation of the `EventBridgeNotifier`. The `N
 to a `di.xml`
 
 ```xml
-<type name="Aligent\Webhooks\Service\Webhook\NotifierFactory">
+<type name="Aligent\AsyncEvents\Service\AsyncEvent\NotifierFactory">
     <arguments>
         <argument name="notifierClasses" xsi:type="array">
             <item name="default" xsi:type="object">Vendor\Module\Service\HttpNotifier</item>
@@ -23,11 +23,11 @@ to a `di.xml`
 
 Example
 ```sh
-curl --location --request POST 'https://m2.dev.aligent.consulting:44356/rest/V1/webhook' \
+curl --location --request POST 'https://m2.dev.aligent.consulting:44356/rest/V1/async_event' \
 --header 'Authorization: Bearer TOKEN' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "webhook": {
+    "asyncEvent": {
         "event_name": "my.custom.hook",
         "recipient_url": "https://recipient_url/custom_hook_handler",
         "verification_token": "supersecret",
