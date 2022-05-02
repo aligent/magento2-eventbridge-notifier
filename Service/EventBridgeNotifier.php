@@ -72,6 +72,7 @@ class EventBridgeNotifier implements NotifierInterface
     {
         $notifierResult = new NotifierResult();
         $notifierResult->setSubscriptionId($asyncEvent->getSubscriptionId());
+        $notifierResult->setAsyncEventData($data);
 
         try {
             $eventEntry['EventBusName'] = $this->config->getEventBridgeBus();
