@@ -28,7 +28,7 @@ curl --location --request POST 'https://m2.dev.aligent.consulting:44356/rest/V1/
 --data-raw '{
     "asyncEvent": {
         "event_name": "my.custom.hook",
-        "recipient_url": "https://recipient_url/custom_hook_handler",
+        "recipient_url": "Amazon Event Bridge ARN",
         "verification_token": "supersecret",
         "metadata": "event_bridge"
     }
