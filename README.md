@@ -12,7 +12,6 @@ to a `di.xml`
 <type name="Aligent\AsyncEvents\Service\AsyncEvent\NotifierFactory">
     <arguments>
         <argument name="notifierClasses" xsi:type="array">
-            <item name="default" xsi:type="object">Vendor\Module\Service\HttpNotifier</item>
             <item name="event_bridge" xsi:type="object">Aligent\EventBridge\Service\EventBridgeNotifier</item>
         </argument>
     </arguments>
