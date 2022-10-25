@@ -75,7 +75,6 @@ class EventBridgeNotifier implements NotifierInterface
         $notifierResult->setAsyncEventData($data);
 
         try {
-            $eventEntry['EventBusName'] = $this->config->getEventBridgeBus();
             $result = $this->eventBridgeClient->putEvents([
                  'Entries' => [
                       [
@@ -83,7 +82,8 @@ class EventBridgeNotifier implements NotifierInterface
                            'Detail' => $this->json->serialize($data),
                            'DetailType' => $asyncEvent->getEventName(),
                            'Resources' => [],
-                           'Time' => time()
+                           'Time' => time(),
+                           'EventBusName' => $asyncEvent->getRecipientUrl()
                       ]
                  ]
             ]);
