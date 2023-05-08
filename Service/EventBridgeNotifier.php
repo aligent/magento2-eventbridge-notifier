@@ -40,10 +40,16 @@ class EventBridgeNotifier implements NotifierInterface
     private $config;
 
     /**
-     * @var EventBridgeClient
+     * @var EventBridgeClient|bool
      */
     private $eventBridgeClient;
 
+    /**
+     * @param Json $json
+     * @param EncryptorInterface $encryptor
+     * @param LoggerInterface $logger
+     * @param EventBridgeConfig $config
+     */
     public function __construct(
         Json $json,
         EncryptorInterface $encryptor,
@@ -54,15 +60,6 @@ class EventBridgeNotifier implements NotifierInterface
         $this->encryptor = $encryptor;
         $this->logger = $logger;
         $this->config = $config;
-
-        $this->eventBridgeClient = new EventBridgeClient([
-            'version' => '2015-10-07',
-            'region' => $this->config->getAWSRegion(),
-            'credentials' => [
-                'key' => $this->config->getAWSKeyId(),
-                'secret' => $this->encryptor->decrypt($this->config->getAWSSecretKey())
-            ]
-        ]);
     }
 
     /**
@@ -75,7 +72,16 @@ class EventBridgeNotifier implements NotifierInterface
         $notifierResult->setAsyncEventData($data);
 
         try {
-            $result = $this->eventBridgeClient->putEvents([
+            // Ensure that the client is configured correctly before calling putEvents function
+            $client = $this->getEventBridgeClient();
+            if (!$client) {
+                $notifierResult->setSuccess(false);
+                $notifierResult->setResponseData(
+                    $this->json->serialize(__('EventBridge connection is not configured.'))
+                );
+                return $notifierResult;
+            }
+            $result = $client->putEvents([
                  'Entries' => [
                       [
                            'Source' => $this->config->getEventBridgeSource(),
@@ -121,5 +127,35 @@ class EventBridgeNotifier implements NotifierInterface
         }
 
         return $notifierResult;
+    }
+
+    /**
+     * Initialise and/or return the EventBridge client
+     *
+     * @return EventBridgeClient|bool
+     */
+    private function getEventBridgeClient()
+    {
+        if (!isset($this->eventBridgeClient)) {
+            $region = $this->config->getAWSRegion();
+            $key = $this->config->getAWSKeyId();
+            $secret = $this->config->getAWSSecretKey();
+
+            if ($region === null || $key === null || $secret === $null) {
+                $this->eventBridgeClient = false;
+            } else {
+                $this->eventBridgeClient = new EventBridgeClient(
+                    [
+                        'version' => '2015-10-07',
+                        'region' => $region,
+                        'credentials' => [
+                            'key' => $key,
+                            'secret' => $this->encryptor->decrypt($secret)
+                        ]
+                    ]
+                );
+            }
+        }
+        return $this->eventBridgeClient;
     }
 }
