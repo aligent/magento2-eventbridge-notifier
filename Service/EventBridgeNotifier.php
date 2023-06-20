@@ -141,7 +141,7 @@ class EventBridgeNotifier implements NotifierInterface
             $key = $this->config->getAWSKeyId();
             $secret = $this->config->getAWSSecretKey();
 
-            if ($region === null || $key === null || $secret === $null) {
+            if ($region === null || $key === null || $secret === null) {
                 $this->eventBridgeClient = false;
             } else {
                 $this->eventBridgeClient = new EventBridgeClient(
